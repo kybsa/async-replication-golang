@@ -1,0 +1,67 @@
+version: '2'
+
+services:
+  app:
+    image: 'mcr.microsoft.com/devcontainers/go:1-1.22-bullseye'
+    command: sleep infinity
+    volumes:
+      - ../..:/workspaces:cached
+  postgres:
+    image: 'postgres:13.8-alpine'
+    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    container_name: asyn-replication-golang-postgres
+    ports:
+      - '2432:5432'
+    environment:
+      - POSTGRES_USER=asyync-replication
+      - POSTGRES_PASSWORD=12345678
+  adminer:
+    image: adminer
+    container_name: asyn-replication-golang-adminer
+    restart: always
+    ports:
+      - '2080:8080'
+  zookeeper:
+    container_name: asyn-replication-golang-zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - '2181:2181'
+  kafka:
+    container_name: asyn-replication-golang-kafka
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+      - '9094:9094'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094,PLAINTEXT://kafka:9093
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://localhost:9092,OUTSIDE://localhost:9094,PLAINTEXT://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT,PLAINTEXT:PLAINTEXT
+  kafka-ui:
+    container_name: asyn-replication-golang-kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 1092:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
+  kafka-init-topics:
+    image: confluentinc/cp-kafka:7.2.1
+    container_name: asyn-replication-golang-kafka-init-topics
+    depends_on:
+      - kafka
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+               cub kafka-ready -b kafka:9093 1 30 && \
+               kafka-topics --create --topic send   --partitions 1 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9093'"
+ 
