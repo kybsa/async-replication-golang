@@ -8,7 +8,7 @@ CREATE TABLE send_messages(
 
 create table send_message_status(
     serial_id        BIGSERIAL PRIMARY KEY,
-    message_id BIGINT    NOT NULL,
+    message_id       BIGINT    NOT NULL,
     status           SMALLINT  NOT NULL, -- 1. CREATED, 2. SENDED, 3. SYNC, 4. INVALID_MESSAGE, 5. ERROR, 6. MAX_RETRY,  
     created_at       BIGINT    NOT NULL 
 );

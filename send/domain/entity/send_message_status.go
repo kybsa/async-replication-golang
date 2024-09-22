@@ -13,7 +13,7 @@ const (
 
 type SendMessageStatus struct {
 	SerialID  uint64 `gorm:"column:serial_id;primaryKey"`
-	MessageID uint64 `gorm:"type:uuid;column:idempotency_key"`
+	MessageID uint64 `gorm:"column:message_id"`
 	Status    int16  `gorm:"column:status"`
 	CreatedAt int64  `gorm:"column:created_at"`
 }
