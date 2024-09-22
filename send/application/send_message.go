@@ -1,4 +1,4 @@
-package send
+package application
 
 import (
 	"context"
