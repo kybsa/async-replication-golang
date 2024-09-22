@@ -13,7 +13,7 @@ services:
     ports:
       - '2432:5432'
     environment:
-      - POSTGRES_USER=asyync-replication
+      - POSTGRES_USER=async-replication
       - POSTGRES_PASSWORD=12345678
   adminer:
     image: adminer

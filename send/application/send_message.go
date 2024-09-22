@@ -14,6 +14,8 @@ import (
 )
 
 type SendMessage interface {
+	CreateMessage(ctx context.Context, message dto.Message, db repository.Database) (entityMessage entity.SendMessage, err error)
+	SendMessage(ctx context.Context, message entity.SendMessage) (err error)
 }
 
 type sendMessageImpl struct {

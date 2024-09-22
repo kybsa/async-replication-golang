@@ -7,7 +7,7 @@
 	"dockerComposeFile":"docker-compose.yml",
 	"service": "app",
 	"features": {
-		"ghcr.io/devcontainers/features/go:1": {}
+		//"ghcr.io/devcontainers/features/go:1": {}
 	},
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"customizations": {
