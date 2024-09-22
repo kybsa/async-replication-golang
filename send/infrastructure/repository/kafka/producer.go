@@ -36,7 +36,7 @@ func (_self *producer) Send(ctx context.Context, message entity.SendMessage) (er
 	}
 	defer kafkaProducer.Close()
 
-	if err = kafkaProducer.InitTransactions(nil); err != nil {
+	if err = kafkaProducer.InitTransactions(ctx); err != nil {
 		return
 	}
 
@@ -53,5 +53,5 @@ func (_self *producer) Send(ctx context.Context, message entity.SendMessage) (er
 		return
 	}
 
-	return kafkaProducer.AbortTransaction(nil)
+	return kafkaProducer.AbortTransaction(ctx)
 }
