@@ -25,7 +25,7 @@ func New(options ...Option) application.SendMessage {
 		opt(config)
 	}
 
-	return nil
+	return application.NewMessage(config.sendMessageRepository, config.sendMessageStatusRepository, config.queue, config.database)
 }
 
 func WithGorm(db *gorm.DB) Option {
